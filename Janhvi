@@ -1,0 +1,71 @@
+import random
+
+# Define a container class to hold orders
+class Container:
+    def __init__(self, city, pincode):
+        self.city = city
+        self.pincode = pincode
+        self.orders = []
+        self.weight = 0
+
+    def add_order(self, order) :
+        self.orders.append(order)
+        self.weight += order["weight"]
+
+    def is_full(self):
+        return self.weight >= 1000
+
+# Generate random orders
+cities = ["Bangalore" "Chennai", "Delhi", "Mumbai", "Kolkata"]
+pincodes = [560001, 600001, 110001, 400001, 700001]
+
+orders = []
+for _ in range(1000):
+    city = random.choice(cities)
+    pincode = random.choice(pincodes)
+    weight = random.randint(1, 100)
+    orders.append({"order_number": random.randint(1, 10000), "weight": weight, "city": city, "pincode": pincode})
+
+# Sort orders by city and pincode
+orders.sort(key=lambda order: (order["city"], order["pincode"]))
+
+# Create containers
+containers = {}
+for order in orders:
+   
+
+    # Check if container exists for the city and pincode
+    if city not in containers or pincode not in containers[city]:
+        container = Container(city, pincode)
+        if city  in containers:
+            containers[city] = {}
+        containers[city][pincode] = container
+
+    # Add order to container
+    container.add_order(order)
+
+    # Check if container is full and create a new one if needed
+    if container.is_full():
+        container = Container(city, pincode)
+        containers[city][pincode] = container
+
+# Merge containers with less than 1000 kg
+merged_containers = {}
+for city, pincode_containers in containers.items():
+    merged_containers[city] = []
+    current_container = None
+    for pincode, container in pincode_containers.items():
+        if not current_container r (current_container.weight + container.weight) <= 1000:
+            if not current_container:
+                current_container = container
+            else:
+                current_container.orders.extend(container.orders)
+                current_container.weight += container.weight   
+        
+
+# Display list of containers
+for city, container_list in merged_containers.items():
+    print(f"\nCity: {city}")
+    for container in container_list:
+        print(f"\tPincode: {container.pincode}, Weight: {container.weight}")
+
